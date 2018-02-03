@@ -1,0 +1,29 @@
+cd .<?php
+
+namespace App\Http\Controllers\Reports;
+
+use Illuminate\Http\Request;
+
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
+
+class SheetAController extends Controller
+{
+    public function __construct() {
+        $this->middleware('auth');
+    }
+    
+    function sheetAList($batch){
+        $courses = \App\TvetCourse::get();
+        $sections = \App\TvetSection::where('batch',$batch)->orderBy('section')->get();
+        
+        return view('gradereports.sheeta',compact('courses','sections','batch'));
+    }
+    
+    function sheetAView($id){
+        $section =  \App\TvetSection::find($id);
+        $students = \App\Status::where('section',$section->section)->where('period',$section->batch)->where('course',$section->tvetCourse->course)->get();
+        $subjects = \App\TvetSubjects::where('course_id',$section->course_id)->orderBy('category')->orderBy('sort')->get()->groupBy('sem');
+        
+    }
+}
